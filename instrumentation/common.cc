@@ -22,9 +22,157 @@
 
 #include <vector>
 #include <map>
+#include <iostream>
+#include <fstream>
 
 #include "logging.pb.h"
 #include "symbols.h"
+
+#ifndef _WIN32
+int
+GetPrivateProfileStringA(const char *appName,
+			 const char *keyName,
+			 const char *dfault,
+			 char *returnString,
+			 size_t nSize,
+			 const char *fileName) {
+	int ret = 0, lineno = 0;
+
+	std::ifstream f(fileName);
+	if (!f.is_open())
+		return (0);
+
+	std::string section("");
+	std::string line;
+	std::map<std::string, std::map<std::string,std::string> *> inimap;
+	
+	inimap[section] = new std::map<std::string, std::string>();
+
+	while (std::getline(f, line)) {
+		lineno++;
+		
+		// Trim the right side of the line
+		std::size_t found = line.find_last_not_of(" \t\r\n");
+		if (found == std::string::npos) {
+			// line is blank.
+			continue;
+		}
+		line.erase(found + 1);
+		
+		// Trim left side of line
+		found = line.find_first_not_of(" \t\r\n");
+		if (found == std::string::npos) {
+			// line is blank?
+			continue;
+		}
+		if (found > 0)
+			line.erase(0, found-1);
+
+		if (line[0] == ';' || line[0] == '#') {
+			// comment, ignore
+			continue;
+		}
+		
+		if (line[0] == '[') {
+			line.erase(0, 1);
+			found = line.find_last_not_of("]");
+			if (found == std::string::npos) {
+				// No closing section bracket
+				std::cerr << fileName << ":" << lineno
+					  << ": missing section bracket ']'"
+					  << std::endl;
+				continue;
+			}
+			if (found + 1 != line.length() - 1) {
+				// last ']' isn't at end
+				std::cerr << fileName << ":" << lineno
+					  << ": syntax error" << std::endl;
+				continue;
+			}
+
+			section = line.erase(found + 1);
+			if (inimap.count(section) == 0)
+				inimap[section] = new std::map<std::string,
+							       std::string>();
+			continue;
+		}
+
+		// This should be key=value line
+		found = line.find_first_of("=");
+		if (found == std::string::npos) {
+			std::cerr << fileName << ":" << lineno
+				  << ": syntax error, missing '='"
+				  << std::endl;
+			continue;
+		}
+		
+		std::string key = line.substr(0, found);
+		key.erase(found);
+		found = key.find_last_not_of(" \t\r\n");
+		if (found == std::string::npos) {
+			std::cerr << fileName << ":" << lineno
+				  << ": syntax error, missing key"
+				  << std::endl;
+			continue;
+		}
+		key = key.substr(0, found+1);
+		
+		found = line.find_first_of("=");
+		std::string val = line.substr(found, std::string::npos);
+		val.erase(0, 1);
+		found = val.find_first_not_of(" \t\r\n");
+		if (found == std::string::npos) {
+			std::cerr << fileName << ":" << lineno
+				  << ": syntax error, missing value"
+				  << std::endl;
+			continue;
+		}
+		val = val.substr(found, std::string::npos);
+
+		std::map<std::string, std::string> *m = inimap[section];
+		m->insert(std::pair<std::string, std::string>(key, val));
+	}
+	
+	std::map<std::string, std::map<std::string,std::string> *>::iterator it;
+
+	bool found = false;
+	char *str = NULL;
+
+	it = inimap.find(appName);
+	if (it != inimap.end() && it->second != NULL) {
+		std::map<std::string, std::string> *m = it->second;
+		std::map<std::string,std::string>::iterator it2 = m->find(keyName);
+		if (it2 != m->end()) {
+			strncpy(returnString, it2->second.c_str(), nSize);
+			// XXX check for overflow
+			returnString[nSize-1] = '\0';
+			found = true;
+			ret = strlen(returnString);
+		}
+	}
+
+	if (!found) {
+		// XXX check for overflow
+		if (dfault == NULL)
+			dfault = "";
+		strncpy(returnString, dfault, nSize);
+		returnString[nSize-1] = '\0';
+		ret = strlen(returnString);
+	}
+	
+	while (!inimap.empty()) {
+		it = inimap.begin();
+		inimap[it->first] = NULL;
+		delete it->second;
+		inimap.erase(it->first);
+	}
+	
+	if (f.is_open())
+		f.close();
+	
+	return ret;
+}
+#endif
 
 // See instrumentation.h for globals' documentation.
 namespace globals {
@@ -39,7 +187,7 @@ namespace globals {
   bool has_instr_before_execution_handler;
 
 namespace online {
-  std::set<uint64_t> known_callstack_item;
+  std::set<bx_address> known_callstack_item;
 }  // namespace online
 
 }  // namespace globals
@@ -91,8 +239,8 @@ std::string LogDataAsText(const log_data_st& ld) {
   std::string ret;
 
   snprintf(buffer, sizeof(buffer),
-           "[pid/tid/ct: %.8x/%.8x/%.8x%.8x] {%16s} %.8x, %.8x: %s of %llx "
-           "(%u * %u bytes), pc = %llx [ %40s ]\n",
+           "[pid/tid/ct: %.8x/%.8x/%.8x%.8x] {%16s} %.8x, %.8x: %s of %zx "
+           "(%u * %u bytes), pc = %zx [ %40s ]\n",
            ld.process_id(), ld.thread_id(),
            (unsigned)(ld.create_time() >> 32),
            (unsigned)(ld.create_time()),

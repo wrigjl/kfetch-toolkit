@@ -27,7 +27,6 @@
 #include <map>
 #include <set>
 #include <vector>
-#include <windows.h>
 
 #include "logging.pb.h"
 
@@ -200,6 +199,10 @@ std::string LogDataAsText(const log_data_st& ld);
 // Translate memory access type enum into textual representation.
 const char *translate_mem_access(log_data_st::mem_access_type type);
 
+#ifndef _WIN32
+extern int GetPrivateProfileStringA(const char *, const char *, const char *, char *, size_t, const char *);
+#endif
+
 // ------------------------------------------------------------------
 // Global helper macros.
 // ------------------------------------------------------------------
@@ -220,7 +223,7 @@ const char *translate_mem_access(log_data_st::mem_access_type type);
 
 #define READ_INI_ULL(file, section, name, buf, size, dest) \
   READ_INI_STRING((file), (section), (name), (buf), (size))\
-  if (!sscanf(buf, "%llx", (dest))) {\
+  if (!sscanf(buf, "%lx", (dest))) {\
     fprintf(stderr, "Unable to parse the %s/%s value as integer.\n", \
             (section), (name));\
     return false;\
