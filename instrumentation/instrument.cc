@@ -23,7 +23,9 @@
 #include <map>
 #include <string>
 #include <vector>
+#ifdef _WIN32
 #include <windows.h>
+#endif
 
 #include "bochs.h"
 #include "cpu/cpu.h"
@@ -50,7 +52,6 @@ static void destroy_globals();
 // Callback invoked on Bochs CPU initialization.
 void bx_instr_initialize(unsigned cpu) {
   char *conf_path = NULL;
-  BX_CPU_C *pcpu = BX_CPU(cpu);
 
   // Initialize symbols subsystem.
   symbols::initialize();
