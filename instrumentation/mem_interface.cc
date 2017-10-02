@@ -31,7 +31,7 @@
 
 // Function reads data from specified virtual memory address. Returns false
 // on failure.
-bool read_lin_mem(BX_CPU_C *pcpu, bx_address laddr, unsigned len, void *buf) {
+bool read_lin_mem(BX_CPU_C *pcpu, unsigned long laddr, unsigned len, void *buf) {
   unsigned remainsInPage;
   bx_phy_address paddr;
   unsigned read_len;

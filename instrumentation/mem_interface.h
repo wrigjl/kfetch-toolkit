@@ -33,7 +33,7 @@
 #include "cpu/cpu.h"
 
 // Read linear memory.
-bool read_lin_mem(BX_CPU_C *pcpu, bx_address laddr, unsigned len, void *buf);
+bool read_lin_mem(BX_CPU_C *pcpu, unsigned long laddr, unsigned len, void *buf);
 
 #endif  // KFETCH_TOOLKIT_MEM_INTERFACE_H_
 
