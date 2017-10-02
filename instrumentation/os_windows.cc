@@ -20,9 +20,10 @@
 
 #include "os_windows.h"
 
-#ifdef _WIN32
 #include <stdint.h>
+#ifdef _WIN32
 #include <windows.h>
+#endif
 
 #include "common.h"
 #include "instrument.h"
@@ -393,5 +394,5 @@ module_info *update_module_list(BX_CPU_C *pcpu, bx_address pc) {
 
 }  // namespace windows
 
-#endif  // _WIN32
+//#endif  // _WIN32
 
