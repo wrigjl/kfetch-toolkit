@@ -105,5 +105,8 @@ void bx_instr_before_execution(unsigned cpu, bxInstruction_c *i);
 /* wrmsr callback */
 #define BX_INSTR_WRMSR(cpu_id, addr, value)
 
+/* vmexit callback */
+#define BX_INSTR_VMEXIT(cpu_id, reason, qualification)
+
 #endif  // KFETCH_TOOLKIT_INSTRUMENT_H_
 
