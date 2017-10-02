@@ -27,7 +27,7 @@
 #include "instrument.h"
 #include "logging.pb.h"
 
-namespace linux {
+namespace os_linux {
 
 // TODO(gynvael): move this to os_linux.h
 #ifndef MAX_TASK_COMM_LEN

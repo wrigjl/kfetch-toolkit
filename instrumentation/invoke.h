@@ -101,11 +101,11 @@ const struct tag_kSystemEventHandlers {
     (s_event_handler_func)NULL}
   },
   {"linux",
-   {(s_event_handler_func)linux::init,
-    (s_event_handler_func)linux::check_kernel_addr,
-    (s_event_handler_func)linux::check_user_addr,
-    (s_event_handler_func)linux::fill_cid,
-    (s_event_handler_func)linux::fill_info,
+   {(s_event_handler_func)os_linux::init,
+    (s_event_handler_func)os_linux::check_kernel_addr,
+    (s_event_handler_func)os_linux::check_user_addr,
+    (s_event_handler_func)os_linux::fill_cid,
+    (s_event_handler_func)os_linux::fill_info,
     (s_event_handler_func)NULL}
   },
   {"freebsd",

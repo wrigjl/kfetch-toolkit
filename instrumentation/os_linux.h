@@ -25,7 +25,7 @@
 
 #include "common.h"
 
-namespace linux {
+namespace os_linux {
 
 // ------------------------------------------------------------------
 // System events public interface.
