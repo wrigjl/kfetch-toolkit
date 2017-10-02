@@ -24,8 +24,10 @@
 #include <stdint.h>
 #include <map>
 #include <string>
+#ifdef _WIN32
 #include <windows.h>
 #include "DbgHelp.h"
+#endif
 
 #include "common.h"
 
@@ -41,12 +43,14 @@ struct driver_sym {
   driver_sym(uint64_t pbase, uint64_t mbase) : pdb_base(pbase), module_base(mbase) {}
 };
 
+#ifdef _WIN32
 struct symbol_info_package : public SYMBOL_INFO_PACKAGE {
   symbol_info_package() {
     si.SizeOfStruct = sizeof(SYMBOL_INFO);
     si.MaxNameLen = sizeof(name);
   }
 };
+#endif
 
 // ------------------------------------------------------------------
 // Public interface.
