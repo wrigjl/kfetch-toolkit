@@ -1,0 +1,15 @@
+Makefile
+common.o
+instrument.o
+invoke.o
+libinstrument.a
+logging.pb.cc
+logging.pb.h
+logging.pb.o
+mem_interface.o
+modes.o
+os_freebsd.o
+os_linux.o
+os_openbsd.o
+os_windows.o
+symbols.o
