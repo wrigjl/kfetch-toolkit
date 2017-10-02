@@ -25,12 +25,15 @@
 #include <cstdlib>
 #include <map>
 #include <string>
+#ifdef _WIN32
 #include "DbgHelp.h"
+#endif
 
 #include "common.h"
 
 namespace symbols {
 
+#ifdef _WIN32
 uint64_t cur_base_address;
 std::map<std::string, driver_sym *> known_modules;
 
@@ -149,6 +152,21 @@ bool get_file_size(const char *file_name, uint32_t *file_size) {
 
   return (*file_size != INVALID_FILE_SIZE);
 }
+#else
+  void initialize() {
+  }
+
+  void destroy() {
+  }
+
+  std::string
+  symbolize(const std::string module, uint32_t offset) {
+    char buffer[256];
+
+    snprintf(buffer, sizeof(buffer), "%s+%x", module.c_str(), offset);
+    return std::string(buffer);
+  }
+#endif /* _WIN32 */
 
 }  // namespace symbols
 
