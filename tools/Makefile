@@ -24,7 +24,9 @@ CXXFLAGS = -Wall -Wextra
 LDFLAGS = logging.pb.o common.o -lprotobuf
 PROTOC = protoc
 
-all: sep doubleread print nocidll imagefilename
+ALL=sep doubleread print nocidll imagefilename
+
+all: $(ALL)
 
 common.o: common.cc common.h
 	${CXX} ${CXXFLAGS} -c $< -o $@
@@ -51,6 +53,5 @@ imagefilename: imagefilename.cc logging.pb.o common.o
 	${CXX} ${CXXFLAGS} $< -o $@ ${LDFLAGS}
 
 clean:
-	rm *.o
-	rm logging.pb.*
-
+	rm -f logging.pb.h logging.pb.cc logging.pb.o common.o
+	rm -f $(ALL)
