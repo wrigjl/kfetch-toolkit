@@ -73,6 +73,8 @@ BX_INCDIRS = -I../.. -I$(srcdir)/../.. -I. -I$(srcdir)/.
 	$(CC) -c $(CFLAGS) $(BX_INCDIRS) @CFP@$< @OFP@$@
 
 
+logging.pb.cc logging.pb.h: logging.proto
+	protoc --cpp_out=. logging.proto
 
 libinstrument.a: $(BX_OBJS)
 	@RMCOMMAND@ libinstrument.a
@@ -83,8 +85,9 @@ $(BX_OBJS): $(BX_INCLUDES)
 
 
 clean:
-	@RMCOMMAND@ *.o
-	@RMCOMMAND@ *.a
+	@RMCOMMAND@ libinstrument.a
+	@RMCOMMAND@ $(BX_OBJS)
 
 dist-clean: clean
 	@RMCOMMAND@ Makefile
+	@RMCOMMAND@ logging.pb.cc logging.pb.h
