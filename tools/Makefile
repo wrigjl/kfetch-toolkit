@@ -31,8 +31,8 @@ all: $(ALL)
 common.o: common.cc common.h
 	${CXX} ${CXXFLAGS} -c $< -o $@
 
-logging.pb.h logging.pb.cc: logging.proto
-	${PROTOC} logging.proto --cpp_out=.
+logging.pb.h logging.pb.cc: ../instrumentation/logging.proto
+	${PROTOC} --cpp_out=. ../instrumentation/logging.proto --proto_path ../instrumentation/
 
 logging.pb.o: logging.pb.cc logging.pb.h
 	${CXX} ${CXXFLAGS} -c logging.pb.cc -o $@
