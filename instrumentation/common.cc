@@ -136,12 +136,11 @@ GetPrivateProfileStringA(const char *appName,
 	std::map<std::string, std::map<std::string,std::string> *>::iterator it;
 
 	bool found = false;
-	char *str = NULL;
 
 	it = inimap.find(appName);
 	if (it != inimap.end() && it->second != NULL) {
 		std::map<std::string, std::string> *m = it->second;
-		std::map<std::string,std::string>::iterator it2 = m->find(keyName);
+		std::map<std::string, std::string>::iterator it2 = m->find(keyName);
 		if (it2 != m->end()) {
 			strncpy(returnString, it2->second.c_str(), nSize);
 			// XXX check for overflow
