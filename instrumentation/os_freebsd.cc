@@ -104,7 +104,7 @@ bool init(const char *config_path, void *unused) {
   // Put the kernel address and size in the special module list.
   module_info *mi = new module_info(kernel_start, kernel_end - kernel_start,
                                     "kernel");
-  globals::special_modules.push_back(mi);
+  globals::special_modules->push_back(mi);
 
   // Check some assumptions.
   if (conf_proc_p_comm_size >= MAX_PROC_COMM_LEN) {

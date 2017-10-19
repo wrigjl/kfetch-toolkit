@@ -117,7 +117,7 @@ bool init(const char *config_path, void *unused) {
   // Put the kernel address and size in the special module list.
   module_info *mi = new module_info(kernel_start, kernel_end - kernel_start,
                                     "kernel");
-  globals::special_modules.push_back(mi);
+  globals::special_modules->push_back(mi);
 
   // Check some assumptions.
   if (conf_task_comm_len >= MAX_TASK_COMM_LEN) {
@@ -313,7 +313,7 @@ static module_info *update_module_list(BX_CPU_C *pcpu, uint64_t pc) {
     if (pc >= m.core_addr && pc < m.core_addr + m.core_size) {
       // Yes. We found it!
       module_info *mi = new module_info(m.core_addr, m.core_size, m.name);
-      globals::modules.push_back(mi);
+      globals::modules->push_back(mi);
       return mi;
     }
 

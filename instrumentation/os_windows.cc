@@ -372,9 +372,9 @@ module_info *update_module_list(BX_CPU_C *pcpu, bx_address pc) {
       // ntoskrnl and win32k are the two most frequently seen drivers, so
       // put them into a prioritized list.
       if (!strcmp(module_name, "ntoskrnl.exe") || !strcmp(module_name, "win32k.sys")) {
-        globals::special_modules.push_back(mi);
+        globals::special_modules->push_back(mi);
       } else {
-        globals::modules.push_back(mi);
+        globals::modules->push_back(mi);
       }
 
       return mi;

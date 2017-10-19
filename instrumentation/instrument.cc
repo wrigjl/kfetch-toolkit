@@ -53,6 +53,10 @@ static void destroy_globals();
 void bx_instr_initialize(unsigned cpu) {
   char *conf_path = NULL;
 
+  // initialize globals
+  globals::special_modules = new std::vector<module_info *>();
+  globals::modules = new std::vector<module_info *>();
+
   // Initialize symbols subsystem.
   symbols::initialize();
 
@@ -330,20 +334,20 @@ static void process_mem_access(BX_CPU_C *pcpu, bx_address lin, unsigned len,
 }
 
 static void destroy_globals() {
-  for (unsigned int i = 0; i < globals::modules.size(); i++) {
-    delete globals::modules[i];
+  if (globals::modules != NULL) {
+    for (unsigned int i = 0; i < globals::modules->size(); i++)
+      delete globals::modules->at(i);
+    delete globals::modules;
+    globals::modules = NULL;
   }
-  globals::modules.clear();
 
-  for (unsigned int i = 0; i < globals::special_modules.size(); i++) {
-    delete globals::special_modules[i];
+  if (globals::special_modules != NULL) {
+    for (unsigned int i = 0; i < globals::special_modules->size(); i++)
+      delete globals::special_modules->at(i);
+    delete globals::special_modules;
+    globals::special_modules = NULL;
   }
-  globals::special_modules.clear();
-
-  globals::thread_states.clear();
 
   globals::last_ld_present = false;
-
-  globals::online::known_callstack_item.clear();
 }
 

@@ -239,11 +239,11 @@ extern kfetch_config config;
 
 // Global information about all currently known kernel modules. Updated
 // lazily, only when an unknown driver is encountered.
-extern std::vector<module_info *> modules;
+extern std::vector<module_info *> *modules;
 
 // Same as "modules", but storing references to especially frequently
 // encountered modules.
-extern std::vector<module_info *> special_modules;
+extern std::vector<module_info *> *special_modules;
 
 // Thread descriptors including syscall stats / pending memory references.
 extern std::map<client_id, thread_info> thread_states;

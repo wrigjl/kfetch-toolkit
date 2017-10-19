@@ -177,8 +177,8 @@ GetPrivateProfileStringA(const char *appName,
 // See instrumentation.h for globals' documentation.
 namespace globals {
   kfetch_config config;
-  std::vector<module_info *> special_modules;
-  std::vector<module_info *> modules;
+  std::vector<module_info *> *special_modules;
+  std::vector<module_info *> *modules;
   std::map<client_id, thread_info> thread_states;
 
   log_data_st last_ld;
@@ -210,23 +210,23 @@ int dbg_print(const char *fmt, ...) {
 // an address should be interpreted as a signal to update the current module
 // database.
 module_info* find_module(bx_address item) {
-  unsigned int sz = globals::special_modules.size();
+  unsigned int sz = globals::special_modules->size();
 
   // Prioritize the special_modules list, as it contains the most commonly
   // encountered images (e.g. ntoskrnl, win32k for Windows).
   for (unsigned int i = 0; i < sz; i++) {
-    if (globals::special_modules[i]->module_base <= item &&
-        globals::special_modules[i]->module_base + globals::special_modules[i]->module_size > item) {
-      return globals::special_modules[i];
+    if (globals::special_modules->at(i)->module_base <= item &&
+        globals::special_modules->at(i)->module_base + globals::special_modules->at(i)->module_size > item) {
+      return globals::special_modules->at(i);
     }
   }
 
   // Search through the remaining known modules.
-  sz = globals::modules.size();
+  sz = globals::modules->size();
   for (unsigned int i = 0; i < sz; i++) {
-    if (globals::modules[i]->module_base <= item &&
-        globals::modules[i]->module_base + globals::modules[i]->module_size > item) {
-      return globals::modules[i];
+    if (globals::modules->at(i)->module_base <= item &&
+        globals::modules->at(i)->module_base + globals::modules->at(i)->module_size > item) {
+      return globals::modules->at(i);
     }
   }
 
